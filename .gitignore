@@ -1,0 +1,12 @@
+.vscode/
+.env
+.venv/
+
+*sqlite3
+
+__pycache__/
+*.py[cod]
+
+node_modules/
+dist/
+.vite/
