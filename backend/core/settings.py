@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
 ]
 
+AUTH_USER_MODEL = 'users.Teacher' # For using custom user model
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,13 +79,14 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthenticaiton",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }
 
 SIMPLE_JWT = {
-    "ACESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFREST_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    'TOKEN_OBTAIN_SERIALIZER': 'apps.users.serializers.CustomTokenSerializer',
 }
 
 ROOT_URLCONF = 'core.urls'
