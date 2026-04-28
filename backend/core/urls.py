@@ -28,5 +28,6 @@ urlpatterns = [
     path('api/auth/login/', CustomTokenView.as_view(), name='login'),
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    path('api/students/', include("apps.students.urls"))
+    path('api/', include("apps.students.urls")),
+    path('api/', include("apps.courses.urls"))
 ]
