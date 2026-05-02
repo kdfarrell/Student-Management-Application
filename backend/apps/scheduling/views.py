@@ -10,7 +10,7 @@ class ClassSessionView(viewsets.ModelViewSet):
     serializer_class = ClassSessionSerializer
 
     def get_queryset(self):
-        queryset = ClassSession.objects.filter(subject__course__teacher = self.request.user)
+        queryset = ClassSession.objects.filter(subject__course__teacher = self.request.user).order_by("date", "start_time")
 
         subject = self.request.query_params.get("subject")
         if subject:

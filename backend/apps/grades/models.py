@@ -1,3 +1,52 @@
 from django.db import models
 
-# Create your models here.
+class Assessment(models.Model):
+    subject = models.ForeignKey(
+        "courses.Subject",
+        on_delete=models.CASCADE,
+        related_name="assessments"
+    )
+
+    max_score = models.DecimalField(max_digits=5, decimal_places=2)
+    date = models.DateField()
+
+    ASSESSMENT_CHOICES = [
+        ("test", "Test"),
+        ("assignment", "Assignment"),
+        ("exam", "Exam"),
+        ("quiz", "Quiz"),
+    ]
+
+    assessment_type = models.CharField(
+        max_length=15,
+        choices=ASSESSMENT_CHOICES,
+        default="exam"
+    )
+
+    def __str__(self):
+        return f"{self.subject}"
+
+
+class Grade(models.Model):
+
+    student = models.ForeignKey(
+        "students.Student",
+        on_delete=models.CASCADE,
+        related_name="grades"
+    )
+
+    assessment = models.ForeignKey(
+        "Assessment",
+        on_delete=models.CASCADE,
+        related_name="grades"
+    )
+
+    score = models.DecimalField(max_digits=5, decimal_places=2)
+    feedback = models.TextField(blank=True)
+
+    class Meta:
+        unique_together=("student", "assessment")
+
+    def __str__(self):
+        return f"{self.student}: {self.assessment}"
+
