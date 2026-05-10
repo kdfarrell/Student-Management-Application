@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
-import { Home, PanelLeft, LogOut } from 'lucide-vue-next'
+import { PanelLeft, Home, Users, BookOpen, Calendar, ClipboardCheck, GraduationCap, FileChartColumnIncreasing, Scroll, LogOut } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
 
@@ -43,6 +43,57 @@ function handleLogout() {
           <Home class="w-4 h-4 shrink-0" />
           <span v-if="!collapsed">Dashboard</span>
         </a>
+
+        <a href="/students"
+          :class="collapsed ? 'justify-center' : ''"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-neutral-800 transition-colors">
+          <Users class="w-4 h-4 shrink-0" />
+          <span v-if="!collapsed">Students</span>
+        </a>
+
+        <a href="/courses"
+          :class="collapsed ? 'justify-center' : ''"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-neutral-800 transition-colors">
+          <BookOpen class="w-4 h-4 shrink-0" />
+          <span v-if="!collapsed">Courses</span>
+        </a>
+
+        <a href="/schedule"
+          :class="collapsed ? 'justify-center' : ''"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-neutral-800 transition-colors">
+          <Calendar class="w-4 h-4 shrink-0" />
+          <span v-if="!collapsed">Schedule</span>
+        </a>
+
+        <a href="/attendance"
+          :class="collapsed ? 'justify-center' : ''"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-neutral-800 transition-colors">
+          <ClipboardCheck class="w-4 h-4 shrink-0" />
+          <span v-if="!collapsed">Attendance</span>
+        </a>
+
+        <a href="/grades"
+          :class="collapsed ? 'justify-center' : ''"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-neutral-800 transition-colors">
+          <GraduationCap class="w-4 h-4 shrink-0" />
+          <span v-if="!collapsed">Grades</span>
+        </a>
+
+        <a href="/reports"
+          :class="collapsed ? 'justify-center' : ''"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-neutral-800 transition-colors">
+          <FileChartColumnIncreasing class="w-4 h-4 shrink-0" />
+          <span v-if="!collapsed">Reports</span>
+        </a>
+
+        <a href="/aduit"
+          :class="collapsed ? 'justify-center' : ''"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-neutral-800 transition-colors">
+          <Scroll class="w-4 h-4 shrink-0" />
+          <span v-if="!collapsed">Audit Log</span>
+        </a>
+
+
       </nav>
 
       <!-- Footer -->
