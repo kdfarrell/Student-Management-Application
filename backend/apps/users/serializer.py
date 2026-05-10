@@ -37,3 +37,9 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         token['school_name'] = user.school_name
         return token
     
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['username'] = self.user.username
+        data['school_name'] = self.user.school_name
+        return data
+    
