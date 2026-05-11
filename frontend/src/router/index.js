@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/auth.js'
 import AuthLayout from '../layouts/AuthLayout.vue'
 import AppLayout from '../layouts/AppLayout.vue'
 import LoginView from '../views/auth/LoginView.vue'
+import StudentsView from '../views/students/StudentsView.vue'
 
 const routes = [
     {
@@ -22,11 +23,14 @@ const routes = [
             { 
                 path: 'dashboard', 
                 component: { template: '<div>Dashboard placeholder</div>' }
+            },
+            {
+                path: 'students',
+                component: StudentsView
             }
         ]
     }
 ]
-
 
 const router = createRouter({
     history: createWebHistory(),
