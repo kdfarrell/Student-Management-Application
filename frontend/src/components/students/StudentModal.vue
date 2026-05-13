@@ -40,7 +40,7 @@ const form = ref({
 
 const errors = ref({})
 
-// When editing, pre-fill the form with the student's data
+
 watch(() => props.student, (student) => {
     if (student) {
         form.value = {

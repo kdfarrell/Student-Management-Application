@@ -7,7 +7,7 @@ export const studentService = {
     },
 
     getStudent(id) {
-        return api.get(`students/${id}`) 
+        return api.get(`students/${id}/`) 
     },
 
     createStudent(data) {

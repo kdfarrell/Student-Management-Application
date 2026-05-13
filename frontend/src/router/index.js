@@ -5,6 +5,8 @@ import AuthLayout from '../layouts/AuthLayout.vue'
 import AppLayout from '../layouts/AppLayout.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import StudentsView from '../views/students/StudentsView.vue'
+import CoursesView from '../views/courses/CoursesView.vue'
+import CourseDetail from '../views/courses/CourseDetail.vue'
 
 const routes = [
     {
@@ -27,6 +29,14 @@ const routes = [
             {
                 path: 'students',
                 component: StudentsView
+            },
+            {
+                path: 'courses',
+                component: CoursesView
+            },
+            { 
+                path: 'courses/:id', 
+                component: CourseDetail
             }
         ]
     }

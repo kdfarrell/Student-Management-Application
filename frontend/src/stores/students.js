@@ -22,7 +22,6 @@ export const useStudentStore = defineStore('students', {
                 const response = await studentService.getStudents({ page: this.currentPage, ...params })
                 this.students = response.data.results
                 this.count = response.data.count
-                this.pageSize = response.data.page_size
             } catch (error) {
                 this.error = error.message
             } finally {

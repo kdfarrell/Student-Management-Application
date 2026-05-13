@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/pagination';
 
 import { useStudentStore } from "@/stores/students.js";
+// 1. Import the Course Store to get enrollment data
+import { useCourseStore } from "@/stores/courses.js"; 
 import { SquarePen, Trash2, Eye } from "lucide-vue-next";
 
 import { onMounted, ref } from 'vue';
@@ -24,6 +26,8 @@ import StudentDeleteConfirm from "@/components/students/StudentDeleteConfirm.vue
 import StudentDetail from "@/components/students/StudentDetail.vue";
 
 const studentStore = useStudentStore()
+// 2. Initialize the Course Store
+const courseStore = useCourseStore() 
 
 onMounted(async () => {
   await studentStore.fetchStudents()
@@ -34,11 +38,21 @@ const openModal = ref(false)
 const openDelete = ref(false)
 const openDetail = ref(false)
 
+// 3. New function to load data BEFORE opening the sheet
+async function handleViewDetail(student) {
+  selectedStudent.value = student
+  // This fetches the enrollments so the Detail sheet has data to show
+  await courseStore.fetchEnrollments() 
+  openDetail.value = true
+}
+
 function capitalize(str) {
+  if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function formatDate(dateString) {
+  if (!dateString) return '—';
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -85,9 +99,10 @@ function formatDate(dateString) {
         </TableCell>
         <TableCell>
           <div class="flex items-center justify-center gap-2">
+
             <button
               class="p-1 hover:text-blue-500 transition-colors cursor-pointer"
-              @click="selectedStudent = student; openDetail = true"
+              @click="handleViewDetail(student)"
             >
               <Eye class="w-4 h-4" />
             </button>

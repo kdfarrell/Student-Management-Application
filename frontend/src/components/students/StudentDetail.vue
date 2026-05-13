@@ -1,14 +1,16 @@
 <script setup>
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import {
     Sheet,
     SheetContent,
+    SheetDescription,
     SheetHeader,
     SheetTitle,
-    SheetDescription,
 } from '@/components/ui/sheet'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { User, Mail, Phone, Calendar, CalendarCheck } from 'lucide-vue-next'
+import { useCourseStore } from '@/stores/courses'
+import { Calendar, CalendarCheck, Mail, Phone } from 'lucide-vue-next'
+import { computed } from 'vue'
 
 const props = defineProps({
     student: {
@@ -22,6 +24,16 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:open'])
+const courseStore = useCourseStore()
+
+const studentEnrollments = computed(() => {
+    if (!props.student?.id || !courseStore.enrollments) return []
+
+    return courseStore.enrollments.filter(e => {
+        const studentIdFromEnrollment = e.student?.id || e.student
+        return Number(studentIdFromEnrollment) === Number(props.student.id)
+    })
+})
 
 function capitalize(str) {
     if (!str) return ''
@@ -49,7 +61,9 @@ function formatDate(dateString) {
                             {{ capitalize(student?.first_name) }} {{ capitalize(student?.last_name) }}
                         </SheetTitle>
                         <SheetDescription class="mt-1">
-                            <Badge :class="student?.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" variant="secondary">
+                            <Badge
+                                :class="student?.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+                                variant="secondary">
                                 {{ student?.is_active ? 'Active' : 'Inactive' }}
                             </Badge>
                         </SheetDescription>
@@ -57,7 +71,7 @@ function formatDate(dateString) {
                 </div>
             </SheetHeader>
 
-            <Separator/>
+            <Separator />
 
             <div class="flex flex-col gap-5 px-4">
                 <div class="flex items-center gap-3">
@@ -101,11 +115,34 @@ function formatDate(dateString) {
                 </div>
             </div>
 
-            <Separator/>
+            <Separator />
 
             <div class="px-4">
-                <p class="text-sm font-medium mb-2">Enrolled Courses</p>
-                <p class="text-sm text-muted-foreground">Coming soon.</p>
+                <p class="text-sm font-medium mb-3">Enrolled Courses</p>
+
+              
+                <div v-if="studentEnrollments.length === 0" class="text-sm text-muted-foreground italic">
+                    No active enrollments found.
+                </div>
+
+               
+                <div v-else class="space-y-2">
+                    <div v-for="enrollment in studentEnrollments" :key="enrollment.id"
+                        class="flex items-center justify-between p-3 rounded-lg border bg-neutral-50/50">
+                        <div>
+                            <p class="text-sm font-semibold">{{ enrollment.course_name }}</p>
+                            <p class="text-[11px] text-muted-foreground">
+                                Enrolled: {{ formatDate(enrollment.date_enrolled) }}
+                            </p>
+                        </div>
+
+                        <Badge variant="outline" class="text-[10px] capitalize"
+                            :class="(enrollment.status === 'active' && enrollment.course_is_active !== false) ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'">
+                            {{ (enrollment.status === 'active' && enrollment.course_is_active !== false) ? 'Active' :
+                            'Inactive' }}
+                        </Badge>
+                    </div>
+                </div>
             </div>
 
         </SheetContent>

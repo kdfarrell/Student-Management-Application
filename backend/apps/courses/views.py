@@ -35,7 +35,11 @@ class EnrollmentViewset(viewsets.ModelViewSet):
     queryset = Enrollment.objects.all()
 
     def get_queryset(self):
-        queryset = Enrollment.objects.filter(course__teacher = self.request.user)
-
+        queryset = Enrollment.objects.filter(course__teacher=self.request.user)
+        
+        course_id = self.request.query_params.get('course')
+        if course_id:
+            queryset = queryset.filter(course__id=course_id)
+        
         return queryset
 
