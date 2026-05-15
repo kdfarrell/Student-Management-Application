@@ -19,17 +19,36 @@ class AttendanceViewset(viewsets.ModelViewSet):
         return queryset
     
     @action(detail=False, methods=["post"], url_path="bulk-create")
-    def bulk_create (self, request):
-
+    def bulk_create(self, request):
         attendance_list = request.data.get("attendance", [])
+        created_or_updated = []
+        
+        # Track the session ID so we can flag it as recorded
+        session_id = None
 
-        created = []
-        for attendance in attendance_list:
-            serializer = AttendanceSerializer(data=attendance)
+        for attendance_data in attendance_list:
+            student_id = attendance_data.get("student_id")
+            session_id = attendance_data.get("session_id")
+            status_value = attendance_data.get("status")
+            notes_value = attendance_data.get("notes", "")
+
+            instance = Attendance.objects.filter(student_id=student_id, session_id=session_id).first()
+
+            if instance:
+                serializer = AttendanceSerializer(instance, data=attendance_data, partial=True)
+            else:
+                serializer = AttendanceSerializer(data=attendance_data)
+
             if serializer.is_valid():
                 serializer.save()
-                created.append(serializer.data)
+                created_or_updated.append(serializer.data)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
+        # --- CRITICAL BADGE UPDATE FIX ---
+        # If we successfully processed records, update the parent session flag
+        if session_id and created_or_updated:
+            from apps.scheduling.models import ClassSession  # Adjust path if different
+            ClassSession.objects.filter(id=session_id).update(attendance_recorded=True)
             
-        return Response(created, status=status.HTTP_201_CREATED)
+        return Response(created_or_updated, status=status.HTTP_201_CREATED)

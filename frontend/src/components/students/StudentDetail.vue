@@ -8,9 +8,13 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet'
+import {
+    Table, TableBody, TableCell, TableHead, TableHeader, TableRow
+} from '@/components/ui/table'
 import { useCourseStore } from '@/stores/courses'
+import attendanceService from '@/services/attendanceService'
 import { Calendar, CalendarCheck, Mail, Phone } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
     student: {
@@ -26,13 +30,27 @@ const props = defineProps({
 const emit = defineEmits(['update:open'])
 const courseStore = useCourseStore()
 
+const summary = ref([])
+const loadingSummary = ref(false)
+
 const studentEnrollments = computed(() => {
     if (!props.student?.id || !courseStore.enrollments) return []
-
     return courseStore.enrollments.filter(e => {
         const studentIdFromEnrollment = e.student?.id || e.student
         return Number(studentIdFromEnrollment) === Number(props.student.id)
     })
+})
+
+watch(() => props.open, async (val) => {
+    if (val && props.student?.id) {
+        loadingSummary.value = true
+        try {
+            const res = await attendanceService.getAttendanceSummary(props.student.id)
+            summary.value = res.data
+        } finally {
+            loadingSummary.value = false
+        }
+    }
 })
 
 function capitalize(str) {
@@ -120,12 +138,10 @@ function formatDate(dateString) {
             <div class="px-4">
                 <p class="text-sm font-medium mb-3">Enrolled Courses</p>
 
-              
                 <div v-if="studentEnrollments.length === 0" class="text-sm text-muted-foreground italic">
                     No active enrollments found.
                 </div>
 
-               
                 <div v-else class="space-y-2">
                     <div v-for="enrollment in studentEnrollments" :key="enrollment.id"
                         class="flex items-center justify-between p-3 rounded-lg border bg-neutral-50/50">
@@ -138,11 +154,45 @@ function formatDate(dateString) {
 
                         <Badge variant="outline" class="text-[10px] capitalize"
                             :class="(enrollment.status === 'active' && enrollment.course_is_active !== false) ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'">
-                            {{ (enrollment.status === 'active' && enrollment.course_is_active !== false) ? 'Active' :
-                            'Inactive' }}
+                            {{ (enrollment.status === 'active' && enrollment.course_is_active !== false) ? 'Active' : 'Inactive' }}
                         </Badge>
                     </div>
                 </div>
+            </div>
+
+            <Separator />
+
+            <div class="px-4">
+                <p class="text-sm font-medium mb-3">Attendance Summary</p>
+
+                <div v-if="loadingSummary" class="text-sm text-muted-foreground italic">Loading...</div>
+
+                <div v-else-if="summary.length === 0" class="text-sm text-muted-foreground italic">
+                    No attendance records found.
+                </div>
+
+                <Table v-else>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Course</TableHead>
+                            <TableHead>Sessions</TableHead>
+                            <TableHead>Present</TableHead>
+                            <TableHead>%</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-for="s in summary" :key="s.course">
+                            <TableCell>{{ s.course }}</TableCell>
+                            <TableCell>{{ s.total_sessions }}</TableCell>
+                            <TableCell>{{ s.present }}</TableCell>
+                            <TableCell>
+                                <Badge :class="s.percentage >= 75 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" variant="secondary">
+                                    {{ s.percentage }}%
+                                </Badge>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
 
         </SheetContent>
