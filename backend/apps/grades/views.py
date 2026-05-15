@@ -20,8 +20,11 @@ class AssessmentViewset(viewsets.ModelViewSet):
     queryset = Assessment.objects.all()
 
     def get_queryset(self):
-        queryset = Assessment.objects.filter(subject__course__teacher = self.request.user)
-
+        queryset = Assessment.objects.filter(subject__course__teacher=self.request.user)
+        subject_id = self.request.query_params.get('subject')
+        if subject_id:
+            queryset = queryset.filter(subject_id=subject_id)
+            
         return queryset
 
 class GradeViewset(viewsets.ModelViewSet):
@@ -30,9 +33,10 @@ class GradeViewset(viewsets.ModelViewSet):
     queryset = Grade.objects.all()
 
     def get_queryset(self):
-        queryset = Grade.objects.filter(assessment__subject__course__teacher = self.request.user)
-
-
+        queryset = Grade.objects.filter(assessment__subject__course__teacher=self.request.user)
+        assessment_id = self.request.query_params.get('assessment')
+        if assessment_id:
+            queryset = queryset.filter(assessment_id=assessment_id)
         return queryset
     
     @action(detail=False, methods=['get'], url_path="student-report")

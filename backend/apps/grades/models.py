@@ -7,6 +7,7 @@ class Assessment(models.Model):
         related_name="assessments"
     )
 
+    name = models.CharField(max_length=200)
     max_score = models.DecimalField(max_digits=5, decimal_places=2)
     date = models.DateField()
 

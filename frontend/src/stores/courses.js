@@ -129,6 +129,7 @@ export const useCourseStore = defineStore('courses', {
                 const response = await courseService.getEnrollments({ page: 1, page_size: 100, ...params })
                 this.enrollments = response.data.results
                 this.enrollmentsCount = response.data.count
+                return this.enrollments
             }
             catch (error) {
                 this.error = error.message

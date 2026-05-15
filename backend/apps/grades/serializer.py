@@ -23,6 +23,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
             "id",
             "subject",
             "subject_id",
+            "name",
             "max_score",
             "date",
             "assessment_type"

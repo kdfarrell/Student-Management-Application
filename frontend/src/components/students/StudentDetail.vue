@@ -16,6 +16,8 @@ import attendanceService from '@/services/attendanceService'
 import { Calendar, CalendarCheck, Mail, Phone } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 
+import StudentGradeSummary from '@/components/grades/StudentGradeSummary.vue'
+
 const props = defineProps({
     student: {
         type: Object,
@@ -195,6 +197,12 @@ function formatDate(dateString) {
                 </Table>
             </div>
 
+            <Separator />
+
+            <div class="px-4 mb-4">
+                <p class="text-sm font-medium mb-3">Grade Summary</p>
+                <StudentGradeSummary v-if="student?.id" :student-id="student.id" />
+            </div>
         </SheetContent>
     </Sheet>
 </template>

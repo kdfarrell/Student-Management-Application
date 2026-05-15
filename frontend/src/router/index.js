@@ -9,6 +9,7 @@ import CoursesView from '../views/courses/CoursesView.vue'
 import CourseDetail from '../views/courses/CourseDetail.vue'
 import Schedule from '../views/schedule/Schedule.vue'
 import Attendance from '../views/attendance/AttendanceView.vue'
+import GradesView from '@/views/grades/GradesView.vue'
 
 const routes = [
     {
@@ -47,7 +48,11 @@ const routes = [
             {
                 path: 'attendance',
                 component: Attendance
-            }
+            },
+            { 
+                path: 'grades', 
+                component: GradesView 
+            },
         ]
     }
 ]
