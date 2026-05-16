@@ -2,24 +2,24 @@ import api from './api'
 
 export const studentService = {
 
-    getStudents(params = {}) {
-        return api.get('students/', { params })
-    },
+	getStudents(params = {}) {
+		return api.get('students/', { params })
+	},
 
-    getStudent(id) {
-        return api.get(`students/${id}/`) 
-    },
+	getStudent(id) {
+		return api.get(`students/${id}/`)
+	},
 
-    createStudent(data) {
-        return api.post('students/', data)
-    },
+	createStudent(data) {
+		return api.post('students/', data)
+	},
 
-    updateStudent(id, data) {
-        return api.patch(`students/${id}/`, data)
-    },
+	updateStudent(id, data) {
+		return api.patch(`students/${id}/`, data)
+	},
 
-    deleteStudent(id) {
-        return api.delete(`students/${id}/`)
-    },
+	deleteStudent(id) {
+		return api.delete(`students/${id}/`)
+	},
 
 }

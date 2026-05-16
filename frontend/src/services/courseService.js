@@ -2,71 +2,71 @@ import api from './api'
 
 export const courseService = {
 
-    // Courses
+	// Courses
 
-    getCourses(params = {}) {
-        return api.get('courses/', { params })
-    },
+	getCourses(params = {}) {
+		return api.get('courses/', { params })
+	},
 
-    getCourse(id) {
-        return api.get(`courses/${id}`)
-    },
+	getCourse(id) {
+		return api.get(`courses/${id}`)
+	},
 
-    createCourse(data) {
-        return api.post('courses/', data)
-    },
+	createCourse(data) {
+		return api.post('courses/', data)
+	},
 
-    updateCourse(id, data) {
-        return api.put(`courses/${id}/`, data)
-    },
+	updateCourse(id, data) {
+		return api.put(`courses/${id}/`, data)
+	},
 
-    deleteCourse(id) {
-        return api.delete(`courses/${id}/`)
-    },
-
-
-    // Subjects
-
-    getSubjects(params = {}) {
-        return api.get('subjects/', { params })
-    },
-
-    getSubject(id) {
-        return api.get(`subject/${id}/`)
-    },
-
-    createSubject(data) {
-        return api.post('subjects/', data)
-    },
-
-    updateSubject(id, data) {
-        return api.put(`subjects/${id}/`, data)
-    },
-
-    deleteSubject(id) {
-        return api.delete(`subjects/${id}/`)
-    },
+	deleteCourse(id) {
+		return api.delete(`courses/${id}/`)
+	},
 
 
-    // Enrollments
-    
-    getEnrollments(params = {}) {
-        return api.get('enrollment/', { params })
-    },
+	// Subjects
 
-    getEnrollment(id) {
-        return api.get(`enrollment/${id}/`)
-    },
+	getSubjects(params = {}) {
+		return api.get('subjects/', { params })
+	},
 
-    createEnrollment(data) {
-        return api.post('enrollment/', data)
-    },
+	getSubject(id) {
+		return api.get(`subject/${id}/`)
+	},
 
-    updateEnrollment(id, data) {
-        return api.patch(`enrollment/${id}/`, data)
-    },
+	createSubject(data) {
+		return api.post('subjects/', data)
+	},
 
-    deleteEnrollment(id) {
-        return api.delete(`enrollment/${id}/`)
-    }
+	updateSubject(id, data) {
+		return api.put(`subjects/${id}/`, data)
+	},
+
+	deleteSubject(id) {
+		return api.delete(`subjects/${id}/`)
+	},
+
+
+	// Enrollments
+
+	getEnrollments(params = {}) {
+		return api.get('enrollment/', { params })
+	},
+
+	getEnrollment(id) {
+		return api.get(`enrollment/${id}/`)
+	},
+
+	createEnrollment(data) {
+		return api.post('enrollment/', data)
+	},
+
+	updateEnrollment(id, data) {
+		return api.patch(`enrollment/${id}/`, data)
+	},
+
+	deleteEnrollment(id) {
+		return api.delete(`enrollment/${id}/`)
+	}
 }
