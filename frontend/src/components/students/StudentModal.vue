@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { toast } from 'vue-sonner'
 
 const props = defineProps({
     student: {
@@ -74,13 +75,19 @@ function validate() {
 async function handleSubmit() {
     if (!validate()) return
 
-    if (props.student) {
-        await studentStore.updateStudent(props.student.id, form.value)
-    } else {
-        await studentStore.createStudent(form.value)
+    try {
+        if (props.student) {
+            await studentStore.updateStudent(props.student.id, form.value)
+            toast.success('Student updated successfully.')
+        } else {
+            await studentStore.createStudent(form.value)
+            toast.success('Student added successfully.')
+        }
+        await studentStore.fetchStudents({ page: studentStore.currentPage })
+        emit('update:open', false)
+    } catch {
+        toast.error('Failed to save student.')
     }
-
-    emit('update:open', false)
 }
 </script>
 

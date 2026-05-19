@@ -49,11 +49,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
 
     subjects = SubjectSerializer(many=True, read_only=True)
-    enrolled_students_count = serializers.IntegerField(
-        source='enrolled_students.count',
-        read_only=True
-    )
-
     enrolled_students_count = serializers.SerializerMethodField()
 
     def get_enrolled_students_count(self, obj):

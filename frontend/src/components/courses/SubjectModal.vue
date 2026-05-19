@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from 'vue-sonner'
 
 const props = defineProps({
     subject: { type: Object, default: null },
@@ -34,6 +35,25 @@ const form = ref({
 
 const errors = ref({})
 
+watch(() => props.open, (open) => {
+    if (open && !props.subject) {
+        form.value = {
+            name: '',
+            description: '',
+            weight: '',
+            course: null
+        }
+    }
+    if (open && props.subject) {
+        form.value = {
+            name: props.subject.name,
+            description: props.subject.description,
+            weight: props.subject.weight,
+            course: props.subject.course
+        }
+    }
+})
+
 
 
 function validate() {
@@ -49,14 +69,19 @@ async function handleSubmit() {
 
     form.value.course = route.params.id
 
-    if (props.subject) {
-        await courseStore.updateSubject(props.subject.id, form.value)
-    } else {
-        await courseStore.createSubject(form.value)
+    try {
+        if (props.subject) {
+            await courseStore.updateSubject(props.subject.id, form.value)
+            toast.success('Subject updated successfully.')
+        } else {
+            await courseStore.createSubject(form.value)
+            toast.success('Subject added successfully.')
+        }
+        emit('saved')
+        emit('update:open', false)
+    } catch {
+        toast.error('Failed to save subject.')
     }
-
-    emit('saved')
-    emit('update:open', false)
 }
 </script>
 

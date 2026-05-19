@@ -9,6 +9,8 @@ from apps.scheduling.models import ClassSession
 from apps.attendance.models import Attendance
 
 
+from apps.audit.utils import log_audit
+
 from .models import Student
 from .serializer import StudentSerializer
 
@@ -39,7 +41,34 @@ class StudentViewset(viewsets.ModelViewSet):
     
     
     def perform_create(self, serializer):
-        serializer.save(teacher=self.request.user)
+        student = serializer.save(teacher=self.request.user)
+        log_audit(
+            teacher=self.request.user,
+            action="create",
+            target_model="Student",
+            target_id=student.id,
+            detail={"name": f"{student.first_name} {student.last_name}"},
+        )
+
+    def perform_update(self, serializer):
+        student = serializer.save()
+        log_audit(
+            teacher=self.request.user,
+            action="update",
+            target_model="Student",
+            target_id=student.id,
+            detail={"name": f"{student.first_name} {student.last_name}"},
+        )
+
+    def perform_destroy(self, instance):
+        log_audit(
+            teacher=self.request.user,
+            action="delete",
+            target_model="Student",
+            target_id=instance.id,
+            detail={"name": f"{instance.first_name} {instance.last_name}"},
+        )
+        instance.delete()
 
     @action(detail=True, methods=["get"], url_path="attendance-summary")
     def attendance_summary(self, request, pk=None):

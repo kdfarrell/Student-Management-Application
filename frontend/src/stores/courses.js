@@ -26,10 +26,19 @@ export const useCourseStore = defineStore('courses', {
 			this.error = null
 
 			try {
-				const response = await courseService.getCourses({ page: this.currentPage, ...params })
+				if (params.page !== undefined) {
+					this.currentPage = params.page
+				}
+				const response = await courseService.getCourses({
+					page: this.currentPage,
+					page_size: params.page_size ?? this.pageSize,
+					...params,
+				})
 				this.courses = [...response.data.results]
-				this.coursesCount = response.data.coursesCount
-				this.pageSize = response.data.page_size
+				this.coursesCount = response.data.count
+				if (response.data.page_size) {
+					this.pageSize = response.data.page_size
+				}
 			}
 			catch (error) {
 				this.error = error.message
@@ -81,8 +90,10 @@ export const useCourseStore = defineStore('courses', {
 			try {
 				const response = await courseService.getSubjects({ page: this.currentPage, ...params })
 				this.subjects = response.data.results
-				this.subjectCount = response.data.coursesCount
-				this.pageSize = response.data.page_size
+				this.subjectsCount = response.data.count
+				if (response.data.page_size) {
+					this.pageSize = response.data.page_size
+				}
 			}
 			catch (error) {
 				this.error = error.message

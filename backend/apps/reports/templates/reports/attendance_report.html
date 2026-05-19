@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Report - {{ student.first_name }} {{ student.last_name }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 13px; color: #1a1a1a; padding: 40px; }
+        .header { border-bottom: 3px solid #2563eb; padding-bottom: 20px; margin-bottom: 30px; }
+        .header h1 { font-size: 24px; color: #2563eb; margin-bottom: 4px; }
+        .header p { color: #6b7280; font-size: 12px; }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 30px; }
+        .meta-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px; }
+        .meta-card h3 { font-size: 11px; text-transform: uppercase; color: #6b7280; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .meta-card p { font-size: 18px; font-weight: 700; color: #1a1a1a; }
+        .meta-card span { font-size: 11px; color: #6b7280; }
+        .course-block { margin-bottom: 28px; }
+        .course-title { font-size: 15px; font-weight: 700; color: #1e293b; background: #eff6ff; padding: 10px 14px; border-left: 4px solid #2563eb; border-radius: 0 4px 4px 0; margin-bottom: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; text-align: left; padding: 8px 12px; font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        tr:last-child td { border-bottom: none; }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .summary-row { background: #f8fafc; font-weight: 700; }
+        .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #9ca3af; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Attendance Report</h1>
+        <p>Generated on {{ generated_on }} &nbsp;|&nbsp; {{ teacher.school_name }}</p>
+    </div>
+
+    <div class="meta-grid">
+        <div class="meta-card">
+            <h3>Student</h3>
+            <p>{{ student.first_name }} {{ student.last_name }}</p>
+            <span>{{ student.email }}</span>
+        </div>
+        <div class="meta-card">
+            <h3>Total Sessions</h3>
+            <p>{{ total_sessions }}</p>
+            <span>across all courses</span>
+        </div>
+        <div class="meta-card">
+            <h3>Overall Attendance</h3>
+            <p>{{ overall_percentage|floatformat:1 }}%</p>
+            <span>present + late</span>
+        </div>
+    </div>
+
+    {% for course_data in courses %}
+    <div class="course-block">
+        <div class="course-title">
+            {{ course_data.course.name }}
+            &nbsp;—&nbsp;
+            {{ course_data.present_count }} / {{ course_data.total_sessions }} sessions attended
+            ({{ course_data.percentage|floatformat:1 }}%)
+        </div>
+
+        {% if course_data.records %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Subject</th>
+                    <th>Time</th>
+                    <th>Room</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in course_data.records %}
+                <tr>
+                    <td>{{ record.session.date }}</td>
+                    <td>{{ record.session.subject.name }}</td>
+                    <td>{{ record.session.start_time }} – {{ record.session.end_time }}</td>
+                    <td>{{ record.session.room|default:"—" }}</td>
+                    <td>
+                        {% if record.status == "present" %}
+                            <span class="badge badge-green">Present</span>
+                        {% elif record.status == "late" %}
+                            <span class="badge badge-yellow">Late</span>
+                        {% elif record.status == "excused" %}
+                            <span class="badge badge-blue">Excused</span>
+                        {% else %}
+                            <span class="badge badge-red">Absent</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ record.notes|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color:#9ca3af; font-style:italic; font-size:12px; padding: 8px 0;">No attendance records for this course.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="footer">
+        <span>{{ teacher.first_name }} {{ teacher.last_name }} &nbsp;|&nbsp; {{ teacher.school_name }}</span>
+        <span>School Management System</span>
+    </div>
+</body>
+</html>

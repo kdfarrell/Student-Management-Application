@@ -15,6 +15,7 @@ import {
 import { computed, ref } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
+import { toast } from 'vue-sonner'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -23,6 +24,7 @@ const collapsed = ref(false)
 
 function handleLogout() {
 	auth.logout()
+	toast.success('Logged out successfully.')
 	router.push('/login')
 }
 
@@ -64,7 +66,7 @@ const navItems = [
 			<!-- Logo Panel -->
 			<div class="h-16 flex items-center border-b border-neutral-700 px-4 shrink-0"
 				:class="collapsed ? 'justify-center' : 'justify-between'">
-				<span v-if="!collapsed" class="font-bold text-lg tracking-tight text-white">Chalkboard</span>
+				<span v-if="!collapsed" class="font-bold text-lg tracking-tight text-white">Skool</span>
 				<button @click="collapsed = !collapsed"
 					class="text-neutral-400 hover:text-white p-1.5 rounded hover:bg-neutral-800 transition-colors">
 					<PanelLeft class="w-5 h-5" />

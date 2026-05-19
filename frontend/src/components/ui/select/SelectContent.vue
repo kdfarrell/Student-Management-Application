@@ -37,7 +37,7 @@ const props = defineProps({
   reference: { type: null, required: false },
   asChild: { type: Boolean, required: false },
   as: { type: null, required: false },
-  disableOutsidePointerEvents: { type: Boolean, required: false },
+  disableOutsidePointerEvents: { type: Boolean, required: false, default: false },
   class: {
     type: [Boolean, null, String, Object, Array],
     required: false,

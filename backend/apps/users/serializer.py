@@ -24,7 +24,7 @@ class TeacherRegisterSerializer(serializers.ModelSerializer):
 # For viewing and updating 
 class TeacherProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['username', 'email', 'school_name']
+        fields = ['id', 'username', 'email', 'school_name']
         model = Teacher
 
 

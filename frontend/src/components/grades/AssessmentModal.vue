@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useGradesStore } from '@/stores/grades'
 import { CalendarIcon } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+import { toast } from 'vue-sonner'
 
 const props = defineProps({
   subjectId: { type: Number, required: true },
@@ -31,7 +32,6 @@ const form = ref({
 
 
 watch(() => props.assessment, (val) => {
-  console.log('assessment prop:', val)
   form.value = {
     name: val?.name ?? '',
     max_score: val?.max_score ?? '',
@@ -57,12 +57,15 @@ async function handleSave() {
   try {
     if (props.assessment) {
       await store.updateAssessment(props.assessment.id, form.value)
+      toast.success('Assessment updated.')
     } else {
       await store.createAssessment(form.value)
+      toast.success('Assessment created.')
     }
     emit('saved')
   } catch {
     error.value = 'Failed to save.'
+    toast.error('Failed to save assessment.')
   } finally {
     loading.value = false
   }

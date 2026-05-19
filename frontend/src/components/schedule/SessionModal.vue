@@ -25,6 +25,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import { toast } from 'vue-sonner'
 
 const props = defineProps({
   open: { type: Boolean, required: true },
@@ -40,7 +41,7 @@ const courseStore = useCourseStore()
 const isConfirmDeleteDialogOpen = ref(false)
 
 onMounted(async () => {
-  await courseStore.fetchSubjects()
+  await courseStore.fetchSubjects({ page: 1, page_size: 200 })
 })
 
 const subjects = computed(() => {
@@ -100,14 +101,16 @@ const handleSubmit = async () => {
 
     if (form.value.id) {
       await scheduleStore.updateSchedule(form.value.id, payload)
+      toast.success('Session updated successfully.')
     } else {
       await scheduleStore.createSchedule(payload)
+      toast.success('Session created successfully.')
     }
 
     emit('refresh')
     updateOpenState(false)
-  } catch (error) {
-    console.error('Failed to commit schedule transaction request:', error)
+  } catch {
+    toast.error('Failed to save session.')
   }
 }
 
@@ -116,12 +119,11 @@ const handleDeleteConfirm = async () => {
   
   try {
     await scheduleStore.deleteSchedule(form.value.id)
-    
-    // Close the main edit modal and refresh the background board view
+    toast.success('Session deleted.')
     updateOpenState(false)
     emit('refresh')
-  } catch (error) {
-    console.error('Failed to delete schedule entry:', error)
+  } catch {
+    toast.error('Failed to delete session.')
   }
 }
 </script>

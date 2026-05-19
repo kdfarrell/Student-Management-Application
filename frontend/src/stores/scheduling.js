@@ -21,8 +21,8 @@ export const useScheduleStore = defineStore('schedule', {
 
 			try {
 				const queryParams = (params.date_from && params.date_to)
-					? { ...params }
-					: { page: this.currentPage, ...params }
+					? { ...params, page_size: 200 }
+					: { page: this.currentPage, page_size: params.page_size ?? this.pageSize, ...params }
 
 				const response = await scheduleService.getSchedules(queryParams)
 				this.schedules = response.data.results || []

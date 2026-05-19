@@ -51,6 +51,7 @@ import { Input } from '@/components/ui/input'
 import {
   Table, TableHeader, TableRow, TableHead, TableBody, TableCell
 } from '@/components/ui/table'
+import { toast } from 'vue-sonner'
 
 const props = defineProps({
   assessmentId: { type: Number, required: true },
@@ -70,8 +71,7 @@ watch(() => props.assessmentId, async (id) => {
   loadingStudents.value = true
 
   await gradesStore.fetchGrades(id)
-  console.log('existing grades:', gradesStore.grades)
-  
+
   const assessment = gradesStore.assessments.find(a => a.id === id)
   if (assessment) maxScore.value = assessment.max_score
 
@@ -123,8 +123,10 @@ async function saveAll() {
         await gradeService.createGrade(payload)
       }
     }
+    toast.success('Grades saved successfully.')
   } catch {
     saveError.value = 'Failed to save some grades.'
+    toast.error('Failed to save grades.')
   } finally {
     loading.value = false
   }

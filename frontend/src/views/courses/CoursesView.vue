@@ -9,6 +9,7 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Button } from '@/components/ui/button';
 import { useCourseStore } from '@/stores/courses';
 import { computed, onMounted, ref } from 'vue';
@@ -16,22 +17,43 @@ import { computed, onMounted, ref } from 'vue';
 import { BookOpen, SquarePen, Trash2, Users } from 'lucide-vue-next';
 
 import CourseModal from "@/components/courses/CourseModal.vue";
+import { toast } from 'vue-sonner'
 
 const courseStore = useCourseStore()
 
 onMounted(async () => {
-	await courseStore.fetchCourses()
-	await courseStore.fetchSubjects()
+	await courseStore.fetchCourses({ page: 1, page_size: 100 })
+	await courseStore.fetchSubjects({ page: 1, page_size: 200 })
 	await courseStore.fetchEnrollments()
 })
 
-async function deleteCourse(id) {
-	await courseStore.deleteCourse(id)
-}
-
 const selectedCourse = ref(null)
 const openModal = ref(false)
+const openConfirm = ref(false)
+const courseToDelete = ref(null)
 const courses = computed(() => courseStore.courses)
+
+const deleteMessage = computed(() => {
+	if (!courseToDelete.value) return 'This action cannot be undone.'
+	return `Delete "${courseToDelete.value.name}"? This removes its subjects, sessions, and enrollments.`
+})
+
+function promptDelete(course) {
+	courseToDelete.value = course
+	openConfirm.value = true
+}
+
+async function confirmDelete() {
+	if (!courseToDelete.value) return
+	try {
+		await courseStore.deleteCourse(courseToDelete.value.id)
+		toast.success('Course deleted.')
+	} catch {
+		toast.error('Failed to delete course.')
+	} finally {
+		courseToDelete.value = null
+	}
+}
 
 </script>
 
@@ -58,14 +80,11 @@ const courses = computed(() => courseStore.courses)
 			</CardHeader>
 			<CardContent class="pb-2">
 				<div class="flex gap-6 text-sm text-muted-foreground">
-					<!-- Subjects -->
 					<span class="flex items-center gap-1">
 						<BookOpen class="w-4 h-4" />
 						{{ course?.subjects?.length || 0 }}
 						{{ course?.subjects?.length === 1 ? 'Subject' : 'Subjects' }}
 					</span>
-
-					<!-- Students -->
 					<span class="flex items-center gap-1">
 						<Users class="w-4 h-4" />
 						{{ course?.enrolled_students_count || 0 }}
@@ -80,7 +99,7 @@ const courses = computed(() => courseStore.courses)
 					@click="selectedCourse = course; openModal = true">
 					<SquarePen class="w-4 h-4" />
 				</Button>
-				<Button class="cursor-pointer" variant="destructive" size="icon" @click="deleteCourse(course.id)">
+				<Button class="cursor-pointer" variant="destructive" size="icon" @click="promptDelete(course)">
 					<Trash2 class="w-4 h-4" />
 				</Button>
 			</CardFooter>
@@ -88,6 +107,16 @@ const courses = computed(() => courseStore.courses)
 	</div>
 
 	<CourseModal :key="selectedCourse?.id || 'new-course'" :course="selectedCourse" :open="openModal"
-		@update:open="openModal = $event" @saved="courseStore.fetchCourses()" />
+		@update:open="openModal = $event" @saved="courseStore.fetchCourses({ page: 1, page_size: 100 })" />
+
+	<ConfirmDialog
+		:open="openConfirm"
+		title="Delete Course?"
+		:message="deleteMessage"
+		confirm-label="Delete Course"
+		cancel-label="Cancel"
+		@update:open="openConfirm = $event"
+		@confirm="confirmDelete"
+	/>
 
 </template>

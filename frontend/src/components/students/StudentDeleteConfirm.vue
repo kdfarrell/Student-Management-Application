@@ -11,6 +11,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { toast } from 'vue-sonner'
 
 const props = defineProps({
     student: {
@@ -28,8 +29,14 @@ const emit = defineEmits(['update:open'])
 const studentStore = useStudentStore()
 
 async function handleDelete() {
-    await studentStore.deleteStudent(props.student.id)
-    emit('update:open', false)
+    try {
+        await studentStore.deleteStudent(props.student.id)
+        await studentStore.fetchStudents({ page: studentStore.currentPage })
+        toast.success('Student deleted.')
+        emit('update:open', false)
+    } catch {
+        toast.error('Failed to delete student.')
+    }
 }
 </script>
 

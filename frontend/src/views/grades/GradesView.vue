@@ -16,7 +16,7 @@ import { useGradesStore } from '@/stores/grades'
 const coursesStore = useCourseStore()
 
 onMounted(async () => {
-	await coursesStore.fetchCourses()
+	await coursesStore.fetchCourses({ page: 1, page_size: 100 })
 })
 
 const courses = computed(() => coursesStore.courses)

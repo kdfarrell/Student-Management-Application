@@ -15,6 +15,7 @@ class Course(models.Model):
     
     class Meta:
         unique_together = ("name", "teacher")
+        ordering = ['name']
 
 
 class Subject(models.Model):
@@ -32,6 +33,7 @@ class Subject(models.Model):
     
     class Meta:
         unique_together = ("name", "course")
+        ordering = ["id"]
 
 
 class Enrollment(models.Model):

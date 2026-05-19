@@ -46,6 +46,7 @@ import { ref, watch } from 'vue'
 import { useGradesStore } from '@/stores/grades'
 import { Button } from '@/components/ui/button'
 import AssessmentModal from './AssessmentModal.vue'
+import { toast } from 'vue-sonner'
 
 const props = defineProps({
   subjectId: { type: Number, required: true },
@@ -73,6 +74,11 @@ function openEdit(assessment) {
 }
 
 async function handleDelete(id) {
-  await store.deleteAssessment(id)
+  try {
+    await store.deleteAssessment(id)
+    toast.success('Assessment deleted.')
+  } catch {
+    toast.error('Failed to delete assessment.')
+  }
 }
 </script>

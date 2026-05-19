@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from apps.audit.utils import log_audit
+
 from .models import ClassSession
 from .serializer import ClassSessionSerializer
 
@@ -32,4 +34,41 @@ class ClassSessionView(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save()
+        session = serializer.save()
+        log_audit(
+            teacher=self.request.user,
+            action="create",
+            target_model="ClassSession",
+            target_id=session.id,
+            detail={
+                "subject": session.subject.name,
+                "date": str(session.date),
+                "room": session.room,
+            },
+        )
+
+    def perform_update(self, serializer):
+        session = serializer.save()
+        log_audit(
+            teacher=self.request.user,
+            action="update",
+            target_model="ClassSession",
+            target_id=session.id,
+            detail={
+                "subject": session.subject.name,
+                "date": str(session.date),
+            },
+        )
+
+    def perform_destroy(self, instance):
+        log_audit(
+            teacher=self.request.user,
+            action="delete",
+            target_model="ClassSession",
+            target_id=instance.id,
+            detail={
+                "subject": instance.subject.name,
+                "date": str(instance.date),
+            },
+        )
+        instance.delete()

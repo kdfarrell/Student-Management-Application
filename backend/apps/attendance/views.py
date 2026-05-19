@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from apps.audit.utils import log_audit
+
 from .models import Attendance
 from .serializer import AttendanceSerializer
 
@@ -48,7 +50,17 @@ class AttendanceViewset(viewsets.ModelViewSet):
         # --- CRITICAL BADGE UPDATE FIX ---
         # If we successfully processed records, update the parent session flag
         if session_id and created_or_updated:
-            from apps.scheduling.models import ClassSession  # Adjust path if different
+            from apps.scheduling.models import ClassSession
             ClassSession.objects.filter(id=session_id).update(attendance_recorded=True)
-            
+            log_audit(
+                teacher=request.user,
+                action="update",
+                target_model="Attendance",
+                target_id=session_id,
+                detail={
+                    "session_id": session_id,
+                    "records_saved": len(created_or_updated),
+                },
+            )
+
         return Response(created_or_updated, status=status.HTTP_201_CREATED)

@@ -27,6 +27,37 @@ class AssessmentViewset(viewsets.ModelViewSet):
             
         return queryset
 
+    def perform_create(self, serializer):
+        assessment = serializer.save()
+        log_audit(
+            teacher=self.request.user,
+            action="create",
+            target_model="Assessment",
+            target_id=assessment.id,
+            detail={"name": assessment.name, "subject": assessment.subject.name},
+        )
+
+    def perform_update(self, serializer):
+        assessment = serializer.save()
+        log_audit(
+            teacher=self.request.user,
+            action="update",
+            target_model="Assessment",
+            target_id=assessment.id,
+            detail={"name": assessment.name},
+        )
+
+    def perform_destroy(self, instance):
+        log_audit(
+            teacher=self.request.user,
+            action="delete",
+            target_model="Assessment",
+            target_id=instance.id,
+            detail={"name": instance.name},
+        )
+        instance.delete()
+
+
 class GradeViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = GradeSerializer
@@ -92,4 +123,14 @@ class GradeViewset(viewsets.ModelViewSet):
             target_id = grade.id,
             detail = {"before": str(old_score), "after":str(grade.score)}
         )
+
+    def perform_destroy(self, instance):
+        log_audit(
+            teacher=self.request.user,
+            action="delete",
+            target_model="Grade",
+            target_id=instance.id,
+            detail={"score": str(instance.score)},
+        )
+        instance.delete()
 

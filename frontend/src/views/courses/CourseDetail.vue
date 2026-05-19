@@ -8,6 +8,7 @@ import { useCourseStore } from '@/stores/courses'
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
 
 const route = useRoute()
 const courseStore = useCourseStore()
@@ -32,13 +33,23 @@ onMounted(async () => {
 })
 
 async function deleteSubject(id) {
-	await courseStore.deleteSubject(id)
-	subjects.value = subjects.value.filter(s => s.id !== id)
+	try {
+		await courseStore.deleteSubject(id)
+		subjects.value = subjects.value.filter(s => s.id !== id)
+		toast.success('Subject removed.')
+	} catch {
+		toast.error('Failed to remove subject.')
+	}
 }
 
 async function removeStudent(enrollmentId) {
-	await courseStore.deleteEnrollment(enrollmentId)
-	enrollments.value = enrollments.value.filter(e => e.id !== enrollmentId)
+	try {
+		await courseStore.deleteEnrollment(enrollmentId)
+		enrollments.value = enrollments.value.filter(e => e.id !== enrollmentId)
+		toast.success('Student removed from course.')
+	} catch {
+		toast.error('Failed to remove student.')
+	}
 }
 
 async function refreshCourse() {
