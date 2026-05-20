@@ -121,7 +121,6 @@ PDF reports are generated server-side using xhtml2pdf from HTML templates and re
 - Analytics dashboard with stat cards, bar chart, doughnut chart, and at-risk table
 - PDF report generation for grades and attendance
 - Email delivery of reports via SMTP
-- Toast notifications, loading skeletons, and empty states throughout
 
 ---
 
@@ -141,19 +140,17 @@ PDF reports are generated server-side using xhtml2pdf from HTML templates and re
 
 - Unauthenticated requests return 401; the frontend silently refreshes the token and retries.
 - All API errors return a consistent `{"error": "message"}` format.
-- Form validation errors are displayed inline using shadcn-vue FormMessage.
 - Invalid or missing fields are caught at the serializer level before hitting the database.
 - Pagination (20 per page) is applied to all list endpoints.
 
 ---
 
-## Security & Performance Considerations
+## Security Considerations
 
 - All endpoints are protected by JWT authentication except login and register.
 - Queries are scoped to the logged-in teacher — no cross-user data leakage.
 - Sensitive credentials (secret key, SMTP) are stored in a `.env` file and never committed.
-- PDF files are generated in memory or cleaned up after delivery.
-- Temporary files are not persisted beyond the request lifecycle.
+- PDF files are generated in memory and not persisted beyond the request lifecycle.
 
 ---
 
@@ -169,9 +166,6 @@ PDF reports are generated server-side using xhtml2pdf from HTML templates and re
   - **Attendance:** Session list with recorded/not-recorded status, bulk submission sheet
   - **Grades:** Tabbed grade entry table, weighted average summary with color-coded badges
   - **Reports:** PDF download forms and email dialog per report type
-- Toast notifications (Sonner) on all success and error actions.
-- Loading skeletons on all data tables while fetching.
-- Empty states with call-to-action buttons on all list views.
 
 ---
 
@@ -306,8 +300,6 @@ EMAIL_HOST_USER=your@email.com
 EMAIL_HOST_PASSWORD=yourpassword
 EMAIL_USE_TLS=True
 ```
-
-> **Never commit `.env` to version control.** It is already included in `.gitignore`.
 
 ---
 
