@@ -1,9 +1,16 @@
 <script setup>
-import { Toaster } from 'vue-sonner';
+import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
-	<RouterView />
-	<!-- Added placement, color themes, and a close button helper -->
-	<Toaster position="bottom-right" richColors closeButton />
+  <RouterView />
+  
+  <Toaster 
+    position="bottom-right"
+    richColors
+    closeButton
+    duration="4000"
+    :visible-toasts="5"
+    theme="light"
+  />
 </template>

@@ -23,9 +23,21 @@ const route = useRoute()
 const collapsed = ref(false)
 
 function handleLogout() {
-	auth.logout()
-	toast.success('Logged out successfully.')
-	router.push('/login')
+  try {
+    auth.logout()
+    
+    // Improved toast
+    toast.success('Logged out successfully.', {
+      description: 'You have been signed out of your account.',
+      duration: 3500,
+      position: 'bottom-right',
+      dismissible: true,
+    })
+
+    router.push('/login')
+  } catch (error) {
+    toast.error('Failed to logout. Please try again.')
+  }
 }
 
 // Map human-readable headers to current matching router string rules

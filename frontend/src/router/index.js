@@ -1,26 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
 
-import DashboardView from '@/views/dashboard/DashboardView.vue'
-import GradesView from '@/views/grades/GradesView.vue'
+// Layouts
 import AppLayout from '../layouts/AppLayout.vue'
 import AuthLayout from '../layouts/AuthLayout.vue'
-import Attendance from '../views/attendance/AttendanceView.vue'
+
+// Auth views (eager - needed immediately)
 import LoginView from '../views/auth/LoginView.vue'
-import CourseDetail from '../views/courses/CourseDetail.vue'
-import CoursesView from '../views/courses/CoursesView.vue'
-import ReportView from "../views/reports/ReportsView.vue"
-import Schedule from '../views/schedule/Schedule.vue'
-import StudentsView from '../views/students/StudentsView.vue'
-import AuditView from '../views/audit/AuditView.vue'
+import RegisterView from '../views/auth/RegisterView.vue'
 
 const routes = [
 	{
 		path: '/login',
 		component: AuthLayout,
-		children: [
-			{ path: '', component: LoginView }
-		]
+		children: [{ path: '', component: LoginView }]
+	},
+	{
+		path: '/register',
+		component: AuthLayout,
+		children: [{ path: '', component: RegisterView }]
 	},
 	{
 		path: '/',
@@ -28,42 +26,15 @@ const routes = [
 		component: AppLayout,
 		meta: { requiresAuth: true },
 		children: [
-			{
-				path: 'dashboard',
-				component: DashboardView
-			},
-			{
-				path: 'students',
-				component: StudentsView
-			},
-			{
-				path: 'courses',
-				component: CoursesView
-			},
-			{
-				path: 'courses/:id',
-				component: CourseDetail
-			},
-			{
-				path: 'schedule',
-				component: Schedule
-			},
-			{
-				path: 'attendance',
-				component: Attendance
-			},
-			{
-				path: 'grades',
-				component: GradesView
-			},
-			{
-				path: 'reports',
-				component: ReportView
-			},
-			{
-				path: 'audit',
-				component: AuditView
-			}
+			{ path: 'dashboard', component: () => import('@/views/dashboard/DashboardView.vue') },
+			{ path: 'students', component: () => import('@/views/students/StudentsView.vue') },
+			{ path: 'courses', component: () => import('@/views/courses/CoursesView.vue') },
+			{ path: 'courses/:id', component: () => import('@/views/courses/CourseDetail.vue') },
+			{ path: 'schedule', component: () => import('@/views/schedule/Schedule.vue') },
+			{ path: 'attendance', component: () => import('@/views/attendance/AttendanceView.vue') },
+			{ path: 'grades', component: () => import('@/views/grades/GradesView.vue') },
+			{ path: 'reports', component: () => import('@/views/reports/ReportsView.vue') },
+			{ path: 'audit', component: () => import('@/views/audit/AuditView.vue') },
 		]
 	}
 ]
@@ -78,11 +49,9 @@ router.beforeEach((to, from, next) => {
 
 	if (to.meta.requiresAuth && !auth.isAuthenticated) {
 		next('/login')
-	}
-	else if (to.path === '/login' && auth.isAuthenticated) {
+	} else if (to.path === '/login' && auth.isAuthenticated) {
 		next('/dashboard')
-	}
-	else {
+	} else {
 		next()
 	}
 })
